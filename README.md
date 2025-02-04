@@ -1,6 +1,7 @@
 # TransGO Framework
 The experimental source code of TransGO mentioned in the article "**Predicting Protein Function by Integrating Multi-Level Protein Sequence and Structural Features on a document based Database"** , along with the data scraping and splitting scripts involved.
-<img src="pipeline.png">
+
+<img src="TransGO_refine3_eng.png">
 ## 1. Dependencies
 ## 2. Dataset Preprocessing
 ### 2.1 ProGO Database
