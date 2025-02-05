@@ -73,7 +73,7 @@ We conduct a series of controlled and ablation experiments to evaluate the perfo
 
 - **TransGO_refine/Naive.py** calculates the frequencies of GO terms in the training set and assigns these frequencies as predictions across all proteins.
 
-- **TransGO_refine/TransGO_main.py** trains and validates the TransGO model along with other baseline models. During the dual-channel MCC-GNN training process, we can switch between different contact map inputs for each channel.
+- **TransGO_refine/TransGO_main.py** trains and validates the TransGO model along with other comparative models. During the dual-channel MCC-GNN training process, we can switch between different contact map inputs for each channel.
 
   
 
