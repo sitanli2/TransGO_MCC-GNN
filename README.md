@@ -61,7 +61,7 @@ We compute residue contact maps with varying connection densities by calculating
 
 ## 3. Training and validation
 
-We perform a series of controlled and ablation experiments to assess the performance of the TransGO model and explore methods for reducing training costs.
+We conduct a series of controlled and ablation experiments to evaluate the performance of the TransGO model alongside other comparative models, while also investigating strategies to reduce training costs.
 
 - **TransGO_refine/DeepFRI_main.py** and **ESM_main.py**: These scripts replicate the DeepFRI and DeepFRI(ESM2) model based on the works of MaW et al.([Wenjian-Ma/Struct2Go](https://github.com/Wenjian-Ma/Struct2Go)) and Gligorijević V et al.([flatironinstitute/DeepFRI: Deep functional residue identification](https://github.com/flatironinstitute/DeepFRI))
 
