@@ -1,37 +1,108 @@
 # TransGO Framework
-The experimental source code of TransGO mentioned in the article "**Predicting Protein Function by Integrating Multi-Level Protein Sequence and Structural Features on a document based Database"** , along with the data scraping and splitting scripts involved.
+
+This repository contains the experimental source code for TransGO, as discussed in the paper "**Predicting Protein Function by Integrating Multi-Level Protein Sequence and Structural Features on a Document-Based Database**," along with the data scraping and splitting scripts used in the process.
+
+
 
 <img src="TransGO_refine3_eng.png">
 
+
+
 ## 1. Dependencies
+
+- python == 3.10
+- CUDA == 11.8
+- cudnn == 8.8
+- torch == 2.3.1
+- torch-geometric == 2.6.1
+- jsonpath == 0.82
+- pymongo == 3.12.1
+
+
+
 ## 2. Dataset Preprocessing
+
 ### 2.1 ProGO Database
-我们从一个文档型蛋白质关联数据库ProGO来获取我们所需的实验数据集。 具体的数据库搭建以及获取方式见 (url:)
-- ProGO_scrapy/ 文件夹下的Uniprot_Scrapy, PDB_Scrapy, Chembl_Scrapy被用于从Uniprot, PDB, AlphaFold, Chembl 数据库的开放数据接口中获取蛋白质关联数据。并对接口返回的Json和XML文档进行数据清洗。
-- ProGO_scrapy/MySQL_chembl 用于将ChEMBL32 的MySQL类型数据库转换为MonGODB可以存储的JSON字典。
+
+We obtained the experimental dataset required for our study from the document-based protein association database, ProGO. For details on the database construction and data retrieval process, please refer to: [sitanli2/ProGO_Database: Construction and overall framework of the ProGO Database](https://github.com/sitanli2/ProGO_Database)
+
+- The **Uniprot_Scrapy**, **PDB_Scrapy**, and **Chembl_Scrapy** folders under **ProGO_scrapy/** are used to retrieve protein association data from the open data APIs of Uniprot, PDB, AlphaFold, and Chembl databases. These scripts also perform data cleaning on the returned JSON and XML documents.
+- The **ProGO_scrapy/MySQL_chembl** script is used to convert the ChEMBL32 MySQL database into JSON dictionaries that can be stored in MongoDB.
+
 ### 2.2 Experimental Dataset PreProcessing
+
 To predict protein functions by integrating sequence and structural data, we developed a comprehensive workflow based on ProGO database. Users can selected protein entries from ProGO (47,789 entries) based on specific criteria.
-- Preprocessing/PDBID_mapping_UPID.py 用来根据指定蛋白质链的PDBID映射其在Uniprot数据库中的ID
-- Preprocessing/CollectFromProGO.py 用来按照用户提供的筛选标准从ProGO中筛选出对应蛋白质的：完整序列，结构文件，功能标签
-- Preprocessing/CollectFromDisk.py 用来精炼直接下载至本地的DeepFRI以及 PDB-B数据集
-最后生成的数据集将被存储至UltraDataset, 其中的filteredIDlist.txt 为从ProGO中筛选出来的条目ID
-如"1UMK$A=27-301$P00387" 其中：
-- $P00387 代表该蛋白质条目的UPID
-- 1UMK 为该蛋白质条目的PDBID
-- $A 代表选择A链代表的空间结构映射
-- =27-301代表A链在完整序列中的起始和结束位置
+
+- The **Preprocessing/PDBID_mapping_UPID.py** script is used to map the PDBID of a specified protein chain to its corresponding ID in the Uniprot database.
+- The **Preprocessing/CollectFromProGO.py** script is used to filter and retrieve the corresponding protein data from ProGO based on user-provided criteria, including the complete sequence, structural files, and functional details.
+- The **Preprocessing/CollectFromDisk.py** script is used to refine the DeepFRI and PDB-B datasets that are directly downloaded to the local machine.
+
+The final dataset will be stored in the **UltraDataset** folder. The **filteredIDlist.txt** file contains the entry IDs selected from ProGO, such as **"1UMK$A=27-301$P00387"**. In this ID format:
+
+**1UMK** represents the PDB ID.
+
+**$A=27-301** indicates the specific chain (A) and the residue range (27-301).
+
+**$P00387** corresponds to the UniProt ID.
+
 ### 2.3 **Multi-level** Modeling of Protein Structures
-We computes residue contact maps with different connection densities through Atoms(C) distance calculations and a unique hidden edge expansion method, calculating contact relationships including both explicit and implicit interactions.
-- biotoolbox/ContactMapGen.py/contact_mapping_PDB()  用来从由实验测定的PDB文件中，按照不同接触阈值提取对应蛋白质链的contact map
-- biotoolbox/ContactMapGen.py/contact_mapping_AlphaFold() 用来从由AlphaFold预测的结构文件中，按照不同接触阈值提取对应蛋白质链的contact map
-- biotoolbox/ContactMapGen.py/ContactMap_densities_Switching() 用来寻找强相关性的隐藏边，或者是弱相关性的冗余边。
-- biotoolbox/ContactMapGen.py/insert_hidden_edge() 用来给对应的接触图进行隐藏边扩充
-- biotoolbox/ContactMap_visualization.py 用于蛋白质接触图可视化
-- biotoolbox/AlphaFoldfile_Dataset_Ultimate.zip and PDBfile_Dataset_Ultimate.zip 为初始pdb结构文件
-- biotoolbox/Contactmapfile_Dataset_Ultimate.zip 为提取出的有不同接触密度的蛋白质接触图
-## 3. Train and validation
-We conduct a series of controlled and ablation experiments to evaluate the performance of the TransGO model and to investigate methods for reducing training costs.
-- TransGO_refine/DeepFRI_main.py and ESM_main.py: 基于MaW et al and Gligorijević V et al等人的工作复现DeepFRI模型
-- ESM_extract and TransGO_refine/utils/ESM_bilstm_Dataset():  combined two sophisticated protein language models, the model introduced by Belpler et.al(**Url**:) based on Bi-LSTM, and the Evolutionary Scale Modeling (ESM) based on Transformer(**Url**:), to create a hybrid feature extractor.
-- TransGO_refine/model.py 集成了多种不同的图神经网络架构，其中包括 MCC-GNN :A multi-channel Graph Neural Networks that integrates sequence representations and contact maps with varying contact densities. The network features three configurations—single, dual, and triple channels, each offering unique ways to capture and combine different aspects of protein data.
-- TransGO_refine/TransGO_main.py 对TransGO模型以及其它对照模型进行训练与验证 （在训练的过程中更换双通道MCC-GNN不同通道的残基接触图）
+
+We compute residue contact maps with varying connection densities by calculating the distance between atoms (specifically Cα atoms) and employing a unique hidden edge expansion method. This approach captures contact relationships, encompassing both explicit and implicit interactions.
+
+- The **biotoolbox/ContactMapGen.py/contact_mapping_PDB()** function is used to extract the corresponding contact map of a protein chain from an experimentally determined PDB file, based on different contact threshold values.
+- The **biotoolbox/ContactMapGen.py/contact_mapping_AlphaFold()** function is used to extract the corresponding contact map of a protein chain from an AlphaFold-predicted structure file, based on different contact threshold values.
+- The **biotoolbox/ContactMapGen.py/ContactMap_densities_Switching()** function is used to identify hidden edges with strong correlations or redundant edges with weak correlations in the contact map.
+- The **biotoolbox/ContactMapGen.py/insert_hidden_edge()** function is used to expand the corresponding contact map by inserting hidden edges.
+- The **biotoolbox/ContactMap_visualization.py** script is used for the visualization of protein contact maps.
+- The **biotoolbox/AlphaFoldfile_Dataset_Ultimate.zip** and **PDBfile_Dataset_Ultimate.zip** contain the initial PDB structure files retrieved from ProGO.
+- The **biotoolbox/Contactmapfile_Dataset_Ultimate.zip** contains protein contact maps with varying contact densities that have been extracted.
+
+
+
+## 3. Training and validation
+
+We perform a series of controlled and ablation experiments to assess the performance of the TransGO model and explore methods for reducing training costs.
+
+- **TransGO_refine/DeepFRI_main.py** and **ESM_main.py**: These scripts replicate the DeepFRI and DeepFRI(ESM2) model based on the works of MaW et al.([Wenjian-Ma/Struct2Go](https://github.com/Wenjian-Ma/Struct2Go)) and Gligorijević V et al.([flatironinstitute/DeepFRI: Deep functional residue identification](https://github.com/flatironinstitute/DeepFRI))
+
+- **ESM_extract** and **TransGO_refine/utils/ESM_bilstm_Dataset()**: These functions combine two advanced protein language models—the model introduced by Belpler et al. ([tbepler/prose: Multi-task and masked language model-based protein sequence embedding models.](https://github.com/tbepler/prose?tab=readme-ov-file)), based on Bi-LSTM, and the Evolutionary Scale Modeling (ESM) model ([facebookresearch/esm: Evolutionary Scale Modeling (esm): Pretrained language models for proteins](https://github.com/facebookresearch/esm?tab=readme-ov-file#available-models)), which is based on Transformer. Together, they form a hybrid feature extractor.
+
+- **TransGO_refine/model.py** integrates various graph neural network feature propagation algorithms, such as GCN, GAT, GATv2, and SAGEConv, among others.
+
+- **TransGO_refine/model.py** integrates multiple graph neural network architectures, including MCC-GNN: a multi-channel Graph Neural Network that combines sequence representations and contact maps with varying contact densities. The network features three configurations—single, dual, and triple channels—each providing a distinct approach to capturing and combining different aspects of protein data.
+
+- **TransGO_refine/Naive.py** calculates the frequencies of GO terms in the training set and assigns these frequencies as predictions across all proteins.
+
+- **TransGO_refine/TransGO_main.py** trains and validates the TransGO model along with other baseline models. During the dual-channel MCC-GNN training process, we can switch between different contact map inputs for each channel.
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
