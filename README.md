@@ -56,6 +56,7 @@ We compute residue contact maps with varying connection densities by calculating
 - The **biotoolbox/ContactMap_visualization.py** script is used for the visualization of protein contact maps.
 - The **biotoolbox/AlphaFoldfile_Dataset_Ultimate.zip** and **PDBfile_Dataset_Ultimate.zip** contain the initial PDB structure files retrieved from ProGO.
 - The **biotoolbox/Contactmapfile_Dataset_Ultimate.zip** contains protein contact maps with varying contact densities that have been extracted.
+- The script **biotoolbox/Alpha_seq_mapping_update.py** is used to generate protein IDs along with their corresponding protein chain sequences, or sequence fragments.
 
 
 
