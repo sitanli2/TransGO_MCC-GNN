@@ -1,6 +1,6 @@
 # MCCPFP：A protein function prediction method based on Multi-Level Protein Sequence and Structural Features
 
-This repository contains the experimental source code for TransGO, as discussed in the paper "**Predicting Protein Function by Integrating Multi-Level Protein Sequence and Structural Features on a Document-Based Database**" along with the data scraping and splitting scripts used in the process.
+This repository contains the experimental source code for TransGO, as discussed in the paper "**Predicting Protein Function by Integrating Multi-Level Protein Sequence and Structural Features through a Document-Based Database**" along with the data scraping and splitting scripts used in the process.
 
 
 
