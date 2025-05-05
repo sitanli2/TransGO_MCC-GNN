@@ -6,7 +6,7 @@ This repository contains the experimental source code for TransGO, as discussed 
 
 <img src="TransGO_refine3_eng.png">
 
-<img src="MC-PFP.png">
+<img src="MC-PFP.jpg">
 
 
 
