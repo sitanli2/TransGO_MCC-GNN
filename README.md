@@ -5,6 +5,7 @@ This repository contains the experimental source code for TransGO, as discussed 
 
 
 <img src="TransGO_refine3_eng.png">
+
 <img src="MC-PFP.png">
 
 
@@ -78,7 +79,8 @@ We conduct a series of controlled and ablation experiments to evaluate the perfo
 - **TransGO_refine/TransGO_main.py** trains and validates the TransGO model along with other comparative models. During the dual-channel MCC-GNN training process, we can switch between different contact map inputs for each channel.
 
   
-
+## DOI(Zenodo)
+10.5281/zenodo.15301235
 
 
 
